@@ -1,4 +1,5 @@
 return {
+
     {
         "nvim-treesitter/nvim-treesitter",
         event = { "BufReadPre", "BufNewFile" },
@@ -6,11 +7,50 @@ return {
             require("configs.treesitter")
         end,
     },
+
+    {
+        "neovim/nvim-lspconfig",
+        event = { "BufReadPre", "BufNewFile" },
+        config = function()
+            require("nvchad.configs.lspconfig").defaults()
+            require("configs.lspconfig")
+        end,
+    },
+
+    {
+        "williamboman/mason-lspconfig.nvim",
+        event = "VeryLazy",
+        dependencies = { "nvim-lspconfig" },
+        config = function()
+            require("configs.mason-lspconfig")
+        end,
+    },
+
+    {
+        "mfussenegger/nvim-lint",
+        event = { "BufReadPre", "BufNewFile" },
+        config = function()
+            require("configs.lint")
+        end,
+    },
+
+    {
+        "rshkarin/mason-nvim-lint",
+        event = "VeryLazy",
+        dependencies = { "nvim-lint" },
+        config = function()
+            require("configs.mason-lint")
+        end,
+    },
+
     {
         "stevearc/conform.nvim",
-        event = "BufWritePre", -- uncomment for format on save
-        opts = require("configs.conform"),
+        event = "BufWritePre",
+        config = function()
+            require("configs.conform")
+        end,
     },
+
     {
         "zapling/mason-conform.nvim",
         event = "VeryLazy",
@@ -20,34 +60,56 @@ return {
         end,
     },
     {
-        "neovim/nvim-lspconfig",
-        event = { "BufReadPre", "BufNewFile" },
+        "mfussenegger/nvim-dap",
         config = function()
-            require("nvchad.configs.lspconfig").defaults()
-            require("configs.lspconfig")
+            require("configs.nvim-dap")
         end,
     },
     {
-        "williamboman/mason-lspconfig.nvim",
+        "nvim-neotest/nvim-nio",
+    },
+    {
+        "rcarriga/nvim-dap-ui",
         event = "VeryLazy",
-        dependencies = { "nvim-lspconfig" },
+        dependencies = {
+            "mfussenegger/nvim-dap",
+            "nvim-neotest/nvim-nio",
+        },
         config = function()
-            require("configs.mason-lspconfig")
+            require("configs.dap-ui")
         end,
     },
     {
-        "mfussenegger/nvim-lint",
-        event = { "BufReadPre", "BufNewFile" },
+        "mfussenegger/nvim-dap-python",
+        ft = "python",
+        dependencies = {
+            "mfussenegger/nvim-dap",
+            "rcarriga/nvim-dap-ui",
+        },
         config = function()
-            require("configs.lint")
+            require("configs.dap-python")
         end,
     },
     {
-        "rshkarin/mason-nvim-lint",
+        "jay-babu/mason-nvim-dap.nvim",
         event = "VeryLazy",
-        dependencies = { "nvim-lint" },
         config = function()
-            require("configs.mason-lint")
+            require("configs.mason-dap")
+        end,
+    },
+    {
+        "julianolf/nvim-dap-lldb",
+        ft = {
+            "c",
+            "cpp",
+        },
+        dependencies = {
+            "mfussenegger/nvim-dap",
+            "rcarriga/nvim-dap-ui",
+        },
+        opts = { codelldb_path = "/path/to/codelldb" },
+        config = function()
+            require("configs.dap-lldb")
         end,
     },
 }
